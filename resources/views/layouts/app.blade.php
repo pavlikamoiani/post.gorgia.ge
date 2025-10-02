@@ -106,7 +106,7 @@
     @endif
 
     <footer>
-        <h6>© 2024 GORGIA. Powered BY: <i class="fas fa-smile"></i> Saba Dumbadze</h6>
+        <h6>© 2025 GORGIA. Powered BY: GORGIA</h6>
     </footer>
     @yield('content')
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FolderController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
@@ -18,7 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', [FolderController::class, 'index'])->name('dashboard');
-    Route::middleware([RoleMiddleware::class.':editor,admin'])->group(function () {
+    Route::middleware([RoleMiddleware::class . ':editor,admin'])->group(function () {
         Route::get('folders/create', [FolderController::class, 'create'])->name('folders.create');
         Route::get('folders/edit/{folder}', [FolderController::class, 'edit'])->name('folders.edit');
         Route::post('folders', [FolderController::class, 'store'])->name('folders.store');
@@ -30,15 +31,17 @@ Route::middleware(['auth'])->group(function () {
         Route::put('images/{id}', [ImageController::class, 'update'])->name('images.update');
     });
     Route::patch('/images/update/{id}', [ImageController::class, 'updateBarcode'])->name('images.barcode');
-    Route::patch('folders/{id}', [FolderController::class, 'publishFolder'])->name('folders.publish')->middleware(RoleMiddleware::class.':admin');
-    Route::delete('folders/{id}', [FolderController::class, 'destroy'])->name('folders.destroy')->middleware(RoleMiddleware::class.':admin');
+    Route::patch('folders/{id}', [FolderController::class, 'publishFolder'])->name('folders.publish')->middleware(RoleMiddleware::class . ':admin');
+    Route::delete('folders/{id}', [FolderController::class, 'destroy'])->name('folders.destroy')->middleware(RoleMiddleware::class . ':admin');
     Route::get('folders/{id}', [FolderController::class, 'show'])->name('folders.show');
 
     Route::get('/images/{id}', [ImageController::class, 'show'])->name('images.show');
-    Route::delete('/images/{id}', [ImageController::class, 'destroy'])->name('images.destroy')->middleware(RoleMiddleware::class.':admin');
+    Route::delete('/images/{id}', [ImageController::class, 'destroy'])->name('images.destroy')->middleware(RoleMiddleware::class . ':admin');
+    Route::post('/images/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::get('/images/{id}/comments', [CommentController::class, 'index'])->name('comments.index');
 });
 
-Route::middleware(['auth', RoleMiddleware::class.':admin'])->group(function () {
+Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::post('/admin/users/{user}/role', [AdminController::class, 'updateRole'])->name('admin.users.updateRole');
     Route::delete('/admin/users/{user}/delete', [AdminController::class, 'deleteUser'])->name('admin.users.delete');

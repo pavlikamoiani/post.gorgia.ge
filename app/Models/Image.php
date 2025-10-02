@@ -20,4 +20,9 @@ class Image extends Model
     {
         return $this->hasOne(User::class, 'id', 'created_by');
     }
+
+    public function comments()
+    {
+        return $this->hasMany(\App\Models\Comment::class)->whereNull('parent_id')->latest();
+    }
 }
