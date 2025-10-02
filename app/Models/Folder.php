@@ -20,4 +20,9 @@ class Folder extends Model
     {
         return $this->hasOne(User::class, 'id', 'created_by');
     }
+
+    public function comments()
+    {
+        return $this->morphMany(\App\Models\Comment::class, 'commentable')->whereNull('parent_id')->latest();
+    }
 }

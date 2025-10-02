@@ -105,7 +105,7 @@
         </div>
     @endif
 
-    <footer>
+    <footer style="z-index: 9999">
         <h6>© 2025 GORGIA. Powered BY: GORGIA</h6>
     </footer>
     @yield('content')

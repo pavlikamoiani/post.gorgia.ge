@@ -9,16 +9,16 @@ class Comment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['image_id', 'user_id', 'body', 'parent_id'];
+    protected $fillable = ['commentable_id', 'commentable_type', 'user_id', 'body', 'parent_id'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function image()
+    public function commentable()
     {
-        return $this->belongsTo(Image::class);
+        return $this->morphTo();
     }
 
     public function replies()

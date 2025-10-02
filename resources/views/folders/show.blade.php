@@ -5,7 +5,7 @@
 @section('content')
     @if (Auth::user()->role !== 'waiting')
 
-        <div  style="margin-top: 4rem; position:relative;">
+    <div  style="margin-top: 5rem; position:relative;">
         <h3 class="main-text text-center">{{ $folder->name }} | {{ $folder->branch }} | {{ $folder->start_date }} | შექმნილია {{ $folder->user->name }}-ს მიერ - {{ $folder->user->email }} <a href="{{ route("images.upload", ['folderId' => $folder->id]) }}" class="btn btn-outline-primary" style="margin-left: 5px;">ფოტო <i class="fas fa-add"></i></a></h3>
         <a href="{{ route('dashboard') }}" class="btn btn-dark mob-hidden" style="position:absolute; top: 0; left: 10px;"><i class="fas fa-arrow-left"></i></a>
     </div>
@@ -23,6 +23,67 @@
         </div>
     </div>
         @endif
+
+        {{-- Folder Comments Section --}}
+<div class="container mt-4 mb-5" style="padding-bottom: 5rem;">
+    <h5 class="mb-4" style="font-weight: bold; color: #333;">ფოლდერის კომენტარები</h5>
+    @auth
+    <form action="{{ route('comments.store', ['type' => 'folders', 'id' => $folder->id]) }}" method="POST" class="mb-4 comment-form">
+        @csrf
+        <div class="d-flex align-items-start">
+            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="40" height="40" alt="avatar">
+            <textarea name="body" class="form-control" rows="2" placeholder="დაწერეთ კომენტარი..." required style="resize:none;"></textarea>
+        </div>
+        <button class="btn btn-primary mt-2 float-start" type="submit" style="padding: 0.4rem 1.5rem; margin-left: 4%;">დამატება</button>
+        <div class="clearfix"></div>
+    </form>
+    @endauth
+
+    <div>
+        @foreach($folder->comments as $comment)
+            <div class="comment-card mb-3 p-3 rounded shadow-sm" style="background: #f9f9fb;">
+                <div class="d-flex align-items-center mb-2">
+                    <img src="https://ui-avatars.com/api/?name={{ urlencode($comment->user->name) }}&background=6c757d&color=fff" class="rounded-circle me-2" width="36" height="36" alt="avatar">
+                    <div>
+                        <strong style="color:#2c3e50;">{{ $comment->user->name }}</strong>
+                        <small class="text-muted ms-2">{{ $comment->created_at->diffForHumans() }}</small>
+                    </div>
+                </div>
+                <div class="ps-1" style="font-size: 1.05rem;">{{ $comment->body }}</div>
+                <div class="mt-2">
+                    @auth
+                    <a href="#" class="reply-link" onclick="event.preventDefault(); document.getElementById('reply-form-folder-{{ $comment->id }}').style.display='block';" style="text-decoration: none;">პასუხი</a>
+                    <form id="reply-form-folder-{{ $comment->id }}" action="{{ route('comments.store', ['type' => 'folders', 'id' => $folder->id]) }}" method="POST" class="mt-2" style="display:none;">
+                        @csrf
+                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                        <div class="d-flex align-items-start">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="32" height="32" alt="avatar">
+                            <textarea name="body" class="form-control" rows="1" placeholder="პასუხი..." required style="resize:none;"></textarea>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary mt-2 float-end" type="submit">პასუხი</button>
+                        <div class="clearfix"></div>
+                    </form>
+                    @endauth
+                </div>
+                {{-- Replies --}}
+                @foreach($comment->replies as $reply)
+                    <div class="reply-card mt-3 ms-4 p-2 rounded" style="background:#eef2f7;">
+                        <div class="d-flex align-items-center mb-1">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($reply->user->name) }}&background=adb5bd&color=fff" class="rounded-circle me-2" width="30" height="30" alt="avatar">
+                            <div>
+                                <strong style="color:#495057;">{{ $reply->user->name }}</strong>
+                                <small class="text-muted ms-2">{{ $reply->created_at->diffForHumans() }}</small>
+                            </div>
+                        </div>
+                        <div class="ps-1" style="font-size: 0.98rem;">{{ $reply->body }}</div>
+                    </div>
+                @endforeach
+            </div>
+        @endforeach
+    </div>
+</div>
+
+
 
 
     <style>

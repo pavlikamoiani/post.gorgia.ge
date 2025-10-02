@@ -57,7 +57,7 @@
     <div class="container mt-4 mb-5" style="padding-bottom: 5rem;">
         <h5 class="mb-4" style="font-weight: bold; color: #333;">კომენტარები</h5>
         @auth
-        <form action="{{ route('comments.store', $image->id) }}" method="POST" class="mb-4 comment-form">
+        <form action="{{ route('comments.store', ['type' => 'images', 'id' => $image->id]) }}" method="POST" class="mb-4 comment-form">
             @csrf
             <div class="d-flex align-items-start">
                 <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->name) }}&background=0D8ABC&color=fff" class="rounded-circle me-2" width="40" height="40" alt="avatar">
@@ -82,7 +82,7 @@
                     <div class="mt-2">
                         @auth
                         <a href="#" class="reply-link" onclick="event.preventDefault(); document.getElementById('reply-form-{{ $comment->id }}').style.display='block';">პასუხი</a>
-                        <form id="reply-form-{{ $comment->id }}" action="{{ route('comments.store', $image->id) }}" method="POST" class="mt-2" style="display:none;">
+                        <form id="reply-form-{{ $comment->id }}" action="{{ route('comments.store', ['type' => 'images', 'id' => $image->id]) }}" method="POST" class="mt-2" style="display:none;">
                             @csrf
                             <input type="hidden" name="parent_id" value="{{ $comment->id }}">
                             <div class="d-flex align-items-start">

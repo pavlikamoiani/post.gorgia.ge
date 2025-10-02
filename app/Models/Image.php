@@ -23,6 +23,6 @@ class Image extends Model
 
     public function comments()
     {
-        return $this->hasMany(\App\Models\Comment::class)->whereNull('parent_id')->latest();
+        return $this->morphMany(\App\Models\Comment::class, 'commentable')->whereNull('parent_id')->latest();
     }
 }

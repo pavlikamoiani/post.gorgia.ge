@@ -10,11 +10,13 @@ return new class extends Migration
     {
         Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('image_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('commentable_id');
+            $table->string('commentable_type');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->text('body');
             $table->foreignId('parent_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->timestamps();
+            $table->index(['commentable_id', 'commentable_type']);
         });
     }
 

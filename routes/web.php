@@ -37,8 +37,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/images/{id}', [ImageController::class, 'show'])->name('images.show');
     Route::delete('/images/{id}', [ImageController::class, 'destroy'])->name('images.destroy')->middleware(RoleMiddleware::class . ':admin');
-    Route::post('/images/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
-    Route::get('/images/{id}/comments', [CommentController::class, 'index'])->name('comments.index');
+    Route::post('/{type}/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
+    Route::get('/{type}/{id}/comments', [CommentController::class, 'index'])->name('comments.index');
 });
 
 Route::middleware(['auth', RoleMiddleware::class . ':admin'])->group(function () {
