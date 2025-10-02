@@ -1,0 +1,59 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class AdminController extends Controller
+{
+    public function index(Request $request)
+    {
+        $search = $request->input('search'); // Get the search query
+
+        // Query users with search functionality
+        $users = User::when($search, function ($query) use ($search) {
+            return $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('email', 'like', '%' . $search . '%');
+        })->get();
+
+        return view('admin.index', compact('users'));
+    }
+
+    public function updateRole(Request $request, User $user)
+    {
+        // Validate the request
+        $request->validate([
+            'role' => 'required|in:viewer,editor,admin',
+        ]);
+
+        // Update the user's role
+        $user->role = $request->role;
+        $user->save();
+
+        return redirect()->route('admin.index')->with('success', 'User role updated successfully.');
+    }
+
+    public function deleteUser( User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('admin.index');
+    }
+
+
+    public function updatePassword(Request $request, User $user)
+    {
+        $request->validate([
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('admin.index')->with('success', 'User password updated successfully.');
+    }
+
+}
